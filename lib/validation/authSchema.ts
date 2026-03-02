@@ -8,6 +8,7 @@ export const signupSchema = z.object({
     .regex(/[A-Za-z]/, "Password must contain at least one letter")
     .regex(/[0-9]/, "Password must contain at least one number")
     .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
+    age: z.string().min(1, "Age must be greater than zero")
 
 
 })
@@ -20,6 +21,8 @@ export const loginSchema = z.object({
     .regex(/[A-Za-z]/, "Password must contain at least one letter")
     .regex(/[0-9]/, "Password must contain at least one number")
     .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
+   
+
 
 
 })

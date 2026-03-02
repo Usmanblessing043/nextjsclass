@@ -1,6 +1,7 @@
 import { ApolloServer } from "@apollo/server";
 import { startServerAndCreateNextHandler } from "@as-integrations/next";
 import { typeDefs, resolvers } from "@/shared/graphql/schema";
+import connect from "@/shared/database/db.connect";
 
 
 const server = new ApolloServer({
@@ -15,3 +16,6 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
     return handler(req);
 }
+
+
+connect()
