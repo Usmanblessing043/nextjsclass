@@ -73,7 +73,7 @@ const page = () => {
         toast.success("Login Successful");
 
 
-        router.push("/dashboard");
+        router.push("/Home");
 
 
       } else {

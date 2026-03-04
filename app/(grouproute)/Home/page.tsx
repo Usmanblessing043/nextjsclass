@@ -1,10 +1,21 @@
-
+"use client"
 
 import React from 'react'
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { BiEnvelope, BiBookOpen, BiCarousel, BiCode, BiListPlus, BiChart, BiLike } from "react-icons/bi";
 
 function Home() {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+  const router = useRouter();
+  const goLogin = () => router.push("/login");
+  const goDashboard = () => router.push("/dashboard");
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
+  if (isLoggedIn === null) return null;
   return (
     <div>
       <div className='flex bg-white/85 items-center justify-between py-4 px-50 sticky top-0 backdrop-blur-md z-50' >
@@ -19,7 +30,21 @@ function Home() {
           <h1 className='text-[14px] text-[#000] font-medium'>Home</h1>
           <h1 className='text-[14px] text-[#000] font-medium'>Categories</h1>
           <h1 className='text-[14px] text-[#000] font-medium'>About</h1>
-          <button className='bg-gradient-to-r from-blue-500 via-purple-500 to-purple-500 text-white  py-2 rounded-lg px-[20px] '>Subscribe</button>
+          {isLoggedIn ? (
+            <button
+              onClick={goDashboard}
+              className="bg-gradient-to-r from-blue-500 via-purple-500 to-purple-500 text-white py-2 rounded-lg px-[20px]"
+            >
+              Dashboard
+            </button>
+          ) : (
+            <button
+              onClick={goLogin}
+              className="bg-gradient-to-r from-blue-500 via-purple-500 to-purple-500 text-white py-2 rounded-lg px-[20px]"
+            >
+              Login
+            </button>
+          )}
         </div>
       </div>
       <div className='bg-gray-100 py-20 px-50 space-y-6'>
@@ -104,23 +129,23 @@ function Home() {
           </div>
         </div>
       </div>
-      <div className='  justify-center items-center bg-[#fffffff3] px-50 py-20'>
+      <div className='  justify-center items-center bg-[#fffffff3] px-50 py-20  bg-gray-100'>
         <h1 className=' flex justify-center text-[24px] text-[#000] font-medium items-center'>Why Readers Love Us</h1>
         <h6 className=' flex justify-center text-[gray] font-medium items-center'>Quality content that makes a difference</h6>
         <br />
         <div className='flex justify-between items-center'>
           <div className='h-50 w-90 bg-white px-5 py-10 rounded-xl hover:shadow-lg hover:translate-y-[-5px] transition-all duration-300'>
-            <button className='bg-blue-500 px-4 py-4 text-3xl rounded-xl'><BiListPlus></BiListPlus></button>
+            <button className='text-white bg-blue-500 px-4 py-4 text-3xl rounded-xl'><BiListPlus></BiListPlus></button>
             <h1 className=' text-black text-[17px] font-bold'>Expert Writers</h1>
             <h5 className='text-[13px] text-gray-400'>Content created by industry professionals and <br /> thought leaders who share their real-world insights.</h5>
           </div>
           <div className='h-50 w-90 bg-white px-5 py-10 rounded-xl  hover:shadow-lg hover:translate-y-[-5px] transition-all duration-300'>
-            <button className='bg-purple-500 px-4 py-4 text-3xl rounded-xl'><BiChart></BiChart></button>
+            <button className='bg-purple-500 text-white  px-4 py-4 text-3xl rounded-xl'><BiChart></BiChart></button>
             <h1 className=' text-black text-[17px] font-bold'>Fresh Content Daily</h1>
             <h5 className='text-[13px] text-gray-400'>New articles published every day covering the latest <br /> trends and timeless wisdom.</h5>
           </div>
           <div className='h-50 w-90 bg-white px-5 py-10 rounded-xl  hover:shadow-lg hover:translate-y-[-5px] transition-all duration-300'>
-            <button className='bg-red-500 px-4 py-4 text-3xl rounded-xl'><BiLike></BiLike></button>
+            <button className='bg-red-500 text-white px-4 py-4 text-3xl rounded-xl'><BiLike></BiLike></button>
             <h1 className=' text-black text-[17px] font-bold'>Community Driven</h1>
             <h5 className='text-[13px] text-gray-400'>Join discussions, share your thoughts, and connect <br />with like-minded readers from around the world.</h5>
           </div>
@@ -271,7 +296,7 @@ function Home() {
           </div>
         </div>
 
-        
+
 
       </div>
       <div className=' bg-gradient-to-br from-blue-700 via-purple-500 to-pink-500 px-50 py-25 gap-5 flex flex-col justify-center items-center'>

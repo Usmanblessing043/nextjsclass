@@ -177,6 +177,11 @@ const dashboard = () => {
     const handlelogout = () => {
         localStorage.removeItem("token");
         router.push("/login");
+        toast.success('Logout Successful')
+    }
+     const handlehome = () => {
+       
+        router.push("/Home");
     }
     const filteredPosts =
         data?.posts?.filter((post) => {
@@ -218,7 +223,7 @@ const dashboard = () => {
                 </div>
                 <div className='flex gap-3 items-center'>
                     <button className='bg-gray-200 flex text-[12px] text-black items-center gap-1  py-2 rounded-lg px-[20px] '> <BiUser className='text-[15px]'></BiUser>{userName}</button>
-                    <button className='bg-transparent flex text-[12px] text-black gap-1 items-center py-2 rounded-lg px-[20px] hover:bg-gray-200 border border-gray-200'><BiHome className='text-[15px]' ></BiHome>Home</button>
+                    <button onClick={handlehome} className='bg-transparent flex text-[12px] text-black gap-1 items-center py-2 rounded-lg px-[20px] hover:bg-gray-200 border border-gray-200'><BiHome className='text-[15px]' ></BiHome>Home</button>
                     <button onClick={handlemypost} className='bg-gradient-to-r from-blue-500 via-purple-500 to-purple-500 text-white  py-2 rounded-lg px-[20px] hover:shadow-lg '>+ New Post</button>
                     <button onClick={handlelogout} className='bg-transparent text-black  py-2 rounded-lg px-[20px] hover:text-red-600 hover:bg-pink-100 '><BiLogOut className='text-[15px]'></BiLogOut></button>
 
