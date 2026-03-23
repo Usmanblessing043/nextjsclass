@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import { ThreeDots } from 'react-loader-spinner'
 import { jwtDecode } from 'jwt-decode';
 import { BiCarousel, BiUser, BiEnvelope, BiLock, BiShow, BiHide, BiHome, BiLogOut, BiSearch } from "react-icons/bi";
-export const dynamic = "force-dynamic";
+
 
 type Post = {
     id: string;
