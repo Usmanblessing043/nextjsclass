@@ -1,5 +1,6 @@
 // import { usermodel } from "../database/model/usermodel";
 import { PostModel } from "../database/model/postmodel";
+import { usermodel } from "../database/model/usermodel";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken"
 import cloudinary from "../lib/cloudinary";
@@ -63,7 +64,13 @@ type user = {
 
 
 
-
+type contexttype = {
+    user?: {
+        email: string
+        id: string
+        iat: number
+    }
+}
 
 export const postresolvers = {
     // Query: {
@@ -95,10 +102,25 @@ export const postresolvers = {
 
 
     Query: {
-       
-        posts: async () => {
-            return await PostModel.find().sort({ createdAt: -1 })
 
+        posts: async (_: any, { page, limit }: { page: number, limit: number }) => {
+
+            console.log(page);
+            console.log(limit);
+            const skip = (page - 1) * limit
+            const total = await PostModel.countDocuments()
+            const totalpages = Math.ceil(total / limit)
+
+            const posts = await PostModel.find()
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit);
+
+            return {
+                posts,
+                total,
+                totalpages
+            };
         },
         post: async (_: any, { id }: { id: string }) => {
             return await PostModel.findById(id);
@@ -106,11 +128,17 @@ export const postresolvers = {
     },
 
     Mutation: {
-        
-        
-        createPost: async (_: any, { title, content, excerpt, category, image, author }: any) => {
+
+
+        createPost: async (_: any, { title, content, excerpt, category, image, author }: any, context: contexttype) => {
             try {
-                console.log("CREATE POST HIT");
+
+                const { user } = context
+                console.log(user);
+                if (!user) {
+                    throw new Error("invalid user")
+                }
+                console.log("CREATE POST");
                 console.log({ title, content, excerpt, category, image, author });
 
                 if (!title || !content || !excerpt || !category || !image || !author) {
@@ -127,6 +155,8 @@ export const postresolvers = {
                     excerpt,
                     category,
                     author,
+                    authorId: user.id.toString()
+
                 });
 
                 console.log("POST CREATED:", post);
@@ -139,26 +169,95 @@ export const postresolvers = {
                 }
             }
         },
-        deletePost: async (_: any, { id }: any) => {
+        deletePost: async (_: any, { id }: any, context: contexttype) => {
             try {
-                await PostModel.findByIdAndDelete(id);
-                return "Deleted";
+                const { user } = context;
+
+                if (!user) {
+                    throw new Error("Invalid user");
+                }
+
+                const oneuser = await usermodel.findById(user.id);
+
+                if (!oneuser) {
+                    throw new Error("User not found");
+                }
+
+                const deleteblog = await PostModel.findOneAndDelete({
+                    _id: id,
+                    author: oneuser.name
+                });
+
+                if (!deleteblog) {
+                    throw new Error("You cannot delete another user's post");
+                }
+
+                return "Post deleted successfully";
+
             } catch (error) {
                 if (error instanceof Error) {
-                    throw new Error(error?.message);
+                    throw new Error(error.message);
                 }
             }
         },
-        updatePost: async (_: any, args: any) => {
-            const { id, ...rest } = args;
+        updatePost: async (_: any, args: any, context: contexttype) => {
+            try {
+                const { user } = context;
 
-            return await PostModel.findByIdAndUpdate(
-                id,
-                rest,
-                { new: true }
-            );
+                if (!user) {
+                    throw new Error("Invalid User");
+                }
+
+                const oneuser = await usermodel.findById(user.id);
+
+                if (!oneuser) {
+                    throw new Error("User not found");
+                }
+                const updateData = {
+                    title: args.title,
+                    content: args.content,
+                    excerpt: args.excerpt,
+                    category: args.category,
+                    image: args.image,
+                };
+
+                const updatedPost = await PostModel.findOneAndUpdate(
+                    {
+                        _id: args.id,
+                        author: oneuser.name
+                    },
+                    updateData,
+                    { new: true }
+                );
+
+                if (!updatedPost) {
+                    throw new Error("You cannot edit another user's post");
+                }
+
+                return updatedPost;
+
+            } catch (error) {
+                if (error instanceof Error) {
+                    throw new Error(error.message);
+                }
+            }
         },
     },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     Post: {
         id: (parent: any) => parent._id.toString(),

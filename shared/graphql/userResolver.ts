@@ -1,8 +1,9 @@
 import { usermodel } from "../database/model/usermodel";
-
+import { GraphQLError } from "graphql";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken"
 import cloudinary from "../lib/cloudinary";
+import { NextResponse } from "next/server";
 if (!process.env.JWT_SECRET) {
     throw new Error("JWT_SECRET is not set in environment variables");
 }
@@ -102,7 +103,7 @@ export const userresolvers = {
         oneuser: async (_: any, { id }: { id: string }) => {
             return await usermodel.findById(id);
         },
-       
+
     },
 
     Mutation: {
@@ -141,19 +142,35 @@ export const userresolvers = {
             try {
                 const user = await usermodel.findOne({ email })
                 if (!user) {
-                    throw new Error('User not found')
+                    // throw new Error('User not found')
+                    throw new GraphQLError('user not found')
 
                 }
                 const isMatch = await bcrypt.compare(password, user.password);
                 if (!isMatch) {
                     throw new Error('Invalid email or password');
                 }
+                // const token = jwt.sign(
+                //     { id: user._id, email: user.email, role: user.role },
+                //     JWT_SECRET,
+                //     { expiresIn: "1h" }
+                // );
                 const token = jwt.sign(
                     { id: user._id, email: user.email, role: user.role },
                     JWT_SECRET,
                     { expiresIn: "1h" }
                 );
+                // if (isMatch) {
+                //     const response =  NextResponse.json({status:"success", user})
+                //     response.cookies.set('auth_token', token,{
+                //         httpOnly:true,
+                //         secure:process.env.NODE_ENV === "production",
+                //         sameSite:"strict",
+                //         maxAge: 60 * 60 * 24,
+                //         path:"/"
+                //     })
 
+                // }
                 return {
                     user,
                     token,
@@ -166,9 +183,9 @@ export const userresolvers = {
             }
 
         },
-        
-       
-       
+
+
+
     },
 
     Post: {

@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken"
 import cloudinary from "../lib/cloudinary";
 if (!process.env.JWT_SECRET) {
-    throw new Error("JWT_SECRET is not set in environment variables");
+  throw new Error("JWT_SECRET is not set in environment variables");
 }
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -54,11 +54,11 @@ console.log(JWT_SECRET);
 //     },
 // ];
 type user = {
-    name: string,
-    email: string,
-    age: number,
-    role: string,
-    password: string
+  name: string,
+  email: string,
+  age: number,
+  role: string,
+  password: string
 }
 export const usertypeDefs = `
 type user{

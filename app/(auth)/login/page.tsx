@@ -64,11 +64,14 @@ const page = () => {
 
     //         })
     try {
-      const res = await loginUser({ variables: data, });
+      const res = await loginUser({
+  variables: data,
+  
+});
       console.log(res.data);
 
       if (res.data?.login?.token) {
-        localStorage.setItem("token", res.data.login.token);
+        // localStorage.setItem("token", res.data.login.token);
         localStorage.setItem("user", JSON.stringify(res.data.login.user));
         toast.success("Login Successful");
 
@@ -85,6 +88,8 @@ const page = () => {
 
       // router.push("/dashboard");
     } catch (err: any) {
+      // console.log(err);
+      
       if (err.graphQLErrors?.length > 0) {
         toast.error(err.graphQLErrors[0].message)
 
@@ -99,7 +104,7 @@ const page = () => {
 
   }
   return (
-    <div className="flex items-center flex-col gap-4 justify-center min-h-screen bg-gradient-to-r from-white via-pink-100 to-pink-100 p-4">
+    <div className="flex items-center flex-col gap-4 justify-center min-h-screen bg-gradient-to-r from-white via-pink-100 to-pink-100 p-4 ">
       <div className=" flex gap-1">
         <button className='bg-gradient-to-r from-blue-500 via-purple-500 to-purple-500 text-white  py-2 rounded-lg px-[7px] text-[20px] '> <BiCarousel></BiCarousel></button>
         <h1 className="font-bold text-2xl">The Modern Blog</h1>

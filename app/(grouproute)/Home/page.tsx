@@ -12,8 +12,16 @@ function Home() {
   const goLogin = () => router.push("/login");
   const goDashboard = () => router.push("/dashboard");
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
+    const checkAuth = async () => {
+      try {
+        const res = await fetch("/api/auth");
+        const data = await res.json();
+        setIsLoggedIn(data.isLoggedIn);
+      } catch {
+        setIsLoggedIn(false);
+      }
+    };
+    checkAuth();
   }, []);
   if (isLoggedIn === null) return null;
   return (

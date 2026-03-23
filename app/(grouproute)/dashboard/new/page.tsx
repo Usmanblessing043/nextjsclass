@@ -18,6 +18,7 @@ type SinglePostResponse = {
         category: string;
         image: string;
         author: string;
+
         createdAt: string;
     };
 };
@@ -32,6 +33,7 @@ mutation CreatePost(
   $category: String!
   $image: String!
   $author: String!
+   
 ) {
   createPost(
     title: $title
@@ -40,6 +42,7 @@ mutation CreatePost(
     category: $category
     image: $image
     author: $author
+     
   ) {
     id
     title
@@ -49,6 +52,7 @@ mutation CreatePost(
     image
     author
     createdAt
+ 
   }
 }
 `;
@@ -63,6 +67,7 @@ const GET_SINGLE_POST = gql`
       image
       author
       createdAt
+
     }
   }
 `;
@@ -75,6 +80,7 @@ mutation UpdatePost(
   $category: String!
   $image: String!
   $author: String!
+
 ) {
   updatePost(
     id: $id
@@ -84,6 +90,7 @@ mutation UpdatePost(
     category: $category
     image: $image
     author: $author
+
   ) {
     id
   }
@@ -112,33 +119,39 @@ const dashh = () => {
     const postId = searchParams.get("id");
     const isEdit = Boolean(postId);
 
+
     const [updatePost, { loading: updating }] = useMutation(UPDATE_POST);
     const { data: singlePostData } = useQuery<SinglePostResponse>(GET_SINGLE_POST, {
         variables: { id: postId },
         skip: !postId,
     });
+    // useEffect(() => {
+    //     const token = localStorage.getItem("token");
+    //     if (!token) {
+    //         router.push("/login");
+    //         return;
+    //     }
+
+    //     try {
+    //         const decoded: DecodedToken = jwtDecode(token);
+    //         const currentTime = Date.now() / 1000;
+    //         if (decoded.exp < currentTime) {
+    //             localStorage.removeItem("token");
+    //             router.push("/login");
+    //         }
+    //     } catch (err) {
+    //         localStorage.removeItem("token");
+    //         router.push("/login");
+    //     }
+    // }, [router]);
+
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            router.push("/login");
-            return;
+        const user = localStorage.getItem("user");
+        if (user) {
+            const parsed = JSON.parse(user);
+            setAuthor(parsed.name);
         }
-
-        try {
-            const decoded: DecodedToken = jwtDecode(token);
-            const currentTime = Date.now() / 1000;
-            if (decoded.exp < currentTime) {
-                localStorage.removeItem("token");
-                router.push("/login");
-            }
-        } catch (err) {
-            localStorage.removeItem("token");
-            router.push("/login");
-        }
-    }, [router]);
-
-
-
+    }, []);
 
 
     const showErrorOnce = () => {
@@ -165,7 +178,8 @@ const dashh = () => {
                         excerpt,
                         category,
                         image,
-                        author,
+                        author
+
                     },
                     refetchQueries: ["GetPosts"]
                 });
@@ -180,7 +194,8 @@ const dashh = () => {
                         excerpt,
                         category,
                         image,
-                        author,
+                        author
+
                     },
                     refetchQueries: ["GetPosts"]
                 });
@@ -293,6 +308,7 @@ const dashh = () => {
                                 onChange={(e) => setAuthor(e.target.value)}
                                 placeholder="Your name"
                                 className="w-[400px] border p-2 rounded  border-gray-300  focus-within:outline-blue-500"
+                                disabled={true}
                             />
                         </div>
 
